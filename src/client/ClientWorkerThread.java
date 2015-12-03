@@ -69,6 +69,7 @@ public class ClientWorkerThread extends Thread {
     private void printMessage(String message)
     {
         _clientUI.showMessage(message);
+        System.out.println("Client: " + message);
     }
 
     private void disconnect() throws IOException {

@@ -88,11 +88,11 @@ public class Client {
 
     public void startTCPConnection(String host, int port, String username) throws IOException {
         _socket = new Socket(host, port); //Creates socket for client/server communication
-        _inFromServer = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
+        _inFromServer = new BufferedReader(new InputStreamReader(_socket.getInputStream(), "UTF-8"));
         _outToServer = new DataOutputStream(_socket.getOutputStream());
 
         _clientThread = new ClientWorkerThread(_inFromServer,_clientUI, this);
-        _clientThread.start();
+        _clientThread.start(); //TODO fenster erst zeigen wenn connected wurde
 
 
         _clientUI = new ClientUI(username + "  Host: " + host + "   Port: " + port); //Initialisiert Chatfenster
@@ -141,7 +141,8 @@ public class Client {
     }
 
     private void writeToServer(String message) throws IOException {
-        _outToServer.writeUTF(message); //Sends the given message to the server (encoded in UTF8)
+        System.out.println("Write to Server: " + message);
+        _outToServer.write(message.getBytes("UTF-8")); //Sends the given message to the server (encoded in UTF8)
     }
 
     private void startClient(String host, int port, String username) throws IOException {
