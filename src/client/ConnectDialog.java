@@ -69,24 +69,24 @@ public class ConnectDialog {
      * Get the username from TextField.
      * @return The username from textfield.
      */
-    public JTextField getServer() {
-        return _srvTxt;
+    public String getServer() {
+        return _srvTxt.getText();
     }
 
     /**
      * Get the port from textfield.
      * @return The Port from textfield.
      */
-    public JTextField getPort() {
-        return _prtTxt;
+    public String getPort() {
+        return _prtTxt.getText();
     }
 
     /**
      * Get the username from textfield.
      * @return The username from textfield.
      */
-    public JTextField getUsername() {
-        return _usrTxt;
+    public String getUsername() {
+        return _usrTxt.getText();
     }
 
     /**
