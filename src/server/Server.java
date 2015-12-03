@@ -97,4 +97,14 @@ public class Server extends Thread{
         _userlock.unlock();
         return user.substring(1); // remove leading komma
     }
+
+    public static void main(String args[]){
+        try {
+            Server server = new Server(12345);
+            server.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
