@@ -1,20 +1,157 @@
 package client;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+import static java.lang.Thread.sleep;
+
 /**
  * Created by abs848 on 03.12.2015.
  */
 public class Client {
-    //private Socket _socket;
-    //private BufferR
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private Socket _socket;
+    private BufferedReader _inFromServer;
+    private DataOutputStream _outToServer;
+    private boolean _serviceRequested;
+
+    //Threads
+    private ClientWorkerThread _clientThread;
+
+    //UI
+    private ClientUI _clientUI;
+    private ConnectDialog _conDialog;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public Client(){
-        ClientUI ui = new ClientUI("Test");
-        ui.show();
+        _serviceRequested = true;
+        //ClientUI ui = new ClientUI("Test");
+        //ui.show();
     }
 
     public static void main(String args[]){
         Client client = new Client();
-        ConnectDialog con = new ConnectDialog("", 0, "");
+
+        client.showConnectionDialog();
+
+
         System.out.println("Ich bin Michael :=)");
+    }
+
+    public void showConnectionDialog()
+    {
+        _conDialog = new ConnectDialog("", 0, "");
+        _conDialog._connectBtn.addActionListener(actionEvent -> {
+
+            boolean valid = true; //Is set to false if one of the fields is empty
+
+            if(_conDialog.getUsername().equals(""))
+            {
+                valid = false;
+                //TODO Fehlermeldung username == ""
+            }
+
+            if(_conDialog.getServer().equals(""))
+            {
+                valid = false;
+                //TODO Fehlermeldung hostadresse == ""
+            }
+
+            if(_conDialog.getPort().equals(""))
+            {
+                valid = false;
+                //TODO Fehlermeldung wenn kein Port oder leer
+            }
+
+            if (valid)
+            {
+                try {
+                    startTCPConnection(_conDialog.getServer(), Integer.parseInt(_conDialog.getPort()), _conDialog.getUsername());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+
+        _conDialog.show(); //Shows the connection dialog
+    }
+
+    public void startTCPConnection(String host, int port, String username) throws IOException {
+        _socket = new Socket(host, port); //Creates socket for client/server communication
+        _inFromServer = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
+        _outToServer = new DataOutputStream(_socket.getOutputStream());
+
+        _clientThread = new ClientWorkerThread(_inFromServer,_clientUI, this);
+        _clientThread.start();
+
+
+        _clientUI = new ClientUI(username + "  Host: " + host + "   Port: " + port); //Initialisiert Chatfenster
+
+        _clientUI._frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                //_clientUI.close();
+                try {
+                    disconnect();
+                    _serviceRequested = false;
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
+        _clientUI._sendBtn.addActionListener(actionEvent -> {
+            try {
+                sendMessage(_clientUI.getInput());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+
+        startClient(host, port, username);
+    }
+    /**
+    Connects to server
+     */
+    private void connect(String username) throws IOException {
+        writeToServer("100 " + username); //Protocol for connecting to server
+    }
+
+    /**
+    Disconnects from server
+     */
+    private void disconnect() throws IOException
+    {
+        writeToServer("199"); //Protocol for disconnecting from server
+    }
+
+    private void sendMessage(String message) throws IOException {
+        writeToServer("101 " + message);
+    }
+
+    private void writeToServer(String message) throws IOException {
+        _outToServer.writeUTF(message); //Sends the given message to the server (encoded in UTF8)
+    }
+
+    private void startClient(String host, int port, String username) throws IOException {
+
+        _clientUI.show(); //Zeigt Chatfenster
+
+        connect(username); //Verbindet mit dem Server (Handshake)
+    }
+
+    public void closeConnection() throws IOException {
+        _socket.close();
     }
 }

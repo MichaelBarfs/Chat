@@ -12,11 +12,11 @@ import java.awt.event.WindowEvent;
  * @version 2015.12.03
  */
 public class ClientUI {
-    private JFrame _frame;
+    public JFrame _frame;
     public final JButton _sendBtn;
     public final JTextField _inputField;
     private DefaultListModel<String> _outputListModel;
-    private DefaultListModel<String> _userListModel;
+    public DefaultListModel<String> _userListModel;
 
 
     /**
@@ -75,6 +75,18 @@ public class ClientUI {
     public void close(){
         _frame.setVisible(false);
         _frame.dispose();
+    }
+
+    /**
+     * Returns deletes the text from textfield and returns it.
+     * @return Text from textfield
+     */
+    public String getInput()
+    {
+        String input = _inputField.getText();
+        _inputField.setText("");
+        _inputField.requestFocus();
+        return input;
     }
 
     /**
