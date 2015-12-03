@@ -1,7 +1,100 @@
 package server;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
- * Created by abs848 on 03.12.2015.
+ * This is the main class for the chat server. In the main loop we accept new connections and create a worker for each
+ * client.
+ * @author Marc Kirchner & Michael Barfs
+ * @version 2015.12.03
  */
-public class Server {
+public class Server extends Thread{
+    public ServerSocket _socket;
+    private Map<ServerWorker, String> _user;
+    private Lock _userlock;
+
+    /**
+     * Create a new server which is listening on a port.
+     * @param port The port.
+     * @throws IOException
+     */
+    public Server(int port) throws IOException {
+        _socket = new ServerSocket(port);
+        _user = new HashMap<ServerWorker, String>();
+        _userlock = new ReentrantLock();
+    }
+
+    /**
+     * Accept new connections while not interrupted.
+     */
+    public void run(){
+        while(!isInterrupted()){
+            try {
+                new ServerWorker(_socket.accept(), this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Add a user to the usermap.
+     * @param worker The worker, you want to add.
+     * @param username The username off the worker.
+     * @return
+     */
+    public boolean addUser(ServerWorker worker, String username){
+        _userlock.lock();
+        if(_user.containsValue(username)){
+            return false;
+        }
+        _user.put(worker, username);
+        _userlock.unlock();
+        return true;
+    }
+
+    /**
+     * Remove a worker from the usermap.
+     * @param worker The worker you want to remove
+     */
+    public void removeUser(ServerWorker worker){
+        _userlock.lock();
+        _user.remove(worker);
+        _userlock.unlock();
+    }
+
+    /**
+     * Send a message to all clients.
+     * @param message The message you want to send.
+     */
+    public void sendToAllClients(String message){
+        _userlock.lock();
+        for(ServerWorker worker : _user.keySet()){
+            try {
+                worker.sendToClient(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        _userlock.unlock();
+    }
+
+    /**
+     * Get a comma separated list of all connected user.
+     * @return Userlist
+     */
+    public String getUserList(){
+        String user = "";
+        _userlock.lock();
+        for(String username : _user.values()){
+            user = user + "," + username;
+        }
+        _userlock.unlock();
+        return user.substring(1); // remove leading komma
+    }
 }
