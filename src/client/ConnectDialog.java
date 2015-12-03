@@ -6,15 +6,24 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
- * Created by abs848 on 03.12.2015.
+ * @author Michael Barfs & Marc Kirchner
+ * @version 2015.12.03
  */
 public class ConnectDialog {
     private JDialog _dialog;
-    public final JButton _connectBtn;
-    public final JTextField _srvTxt;
-    public final JTextField _prtTxt;
-    public final JTextField _usrTxt;
+    private JTextField _srvTxt;
+    private JTextField _prtTxt;
+    private JTextField _usrTxt;
 
+    public final JButton _connectBtn;
+
+
+    /**
+     * Create a new ConnectDialog with default values
+     * @param host The default host address.
+     * @param port The default host port.
+     * @param username The default username.
+     */
     public ConnectDialog(String host, int port, String username){
         _dialog = new JDialog();
         _dialog.setSize(300, 300);
@@ -56,10 +65,40 @@ public class ConnectDialog {
 
     }
 
+    /**
+     * Get the username from TextField.
+     * @return The username from textfield.
+     */
+    public JTextField getServer() {
+        return _srvTxt;
+    }
+
+    /**
+     * Get the port from textfield.
+     * @return The Port from textfield.
+     */
+    public JTextField getPort() {
+        return _prtTxt;
+    }
+
+    /**
+     * Get the username from textfield.
+     * @return The username from textfield.
+     */
+    public JTextField getUsername() {
+        return _usrTxt;
+    }
+
+    /**
+     * Make the dialog visible
+     */
     public void show(){
         _dialog.setVisible(true);
     }
 
+    /**
+     * Close the window
+     */
     public void close(){
         _dialog.setVisible(false);
         _dialog.dispose();
