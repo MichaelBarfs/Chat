@@ -76,6 +76,7 @@ public class Server extends Thread{
      * @param message The message you want to send.
      */
     public void sendToAllClients(String message){
+        System.out.println("SendToAll: " + message);
         _userlock.lock();
         for(ServerWorker worker : _user.keySet()){
             try {
