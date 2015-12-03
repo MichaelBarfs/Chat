@@ -22,7 +22,7 @@ public class ServerWorker extends Thread {
         _server = server;
         _socket = socket;
         _outToClient = new DataOutputStream(socket.getOutputStream());
-        _inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        _inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
     }
 
     /**
@@ -88,7 +88,7 @@ public class ServerWorker extends Thread {
     }
 
     public synchronized void sendToClient(String message) throws IOException {
-        _outToClient.writeUTF(message);
+        _outToClient.write((message + '\r' + '\n').getBytes("UTF-8"));
     }
 
 }
