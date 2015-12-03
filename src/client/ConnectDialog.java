@@ -11,6 +11,9 @@ import java.awt.event.WindowEvent;
 public class ConnectDialog {
     private JDialog _dialog;
     public final JButton _connectBtn;
+    public final JTextField _srvTxt;
+    public final JTextField _prtTxt;
+    public final JTextField _usrTxt;
 
     public ConnectDialog(String host, int port, String username){
         _dialog = new JDialog();
@@ -27,25 +30,22 @@ public class ConnectDialog {
 
         JLabel srvLabel = new JLabel("Server:");
         panel.add(srvLabel);
-        final JTextField srvTxt = new JTextField(host);
-        panel.add(srvTxt);
+        _srvTxt = new JTextField(host);
+        panel.add(_srvTxt);
 
         JLabel prtLabel = new JLabel("Port:");
         panel.add(prtLabel);
-        final JTextField prtTxt = new JTextField(String.valueOf(port));
-        panel.add(prtTxt);
+        _prtTxt = new JTextField(String.valueOf(port));
+        panel.add(_prtTxt);
 
         JLabel usrLabel = new JLabel("User:");
         panel.add(usrLabel);
-        final JTextField usrTxt = new JTextField(username);
-        panel.add(usrTxt);
+        _usrTxt = new JTextField(username);
+        panel.add(_usrTxt);
 
         _connectBtn = new JButton("Verbinden");
 
         panel.add(_connectBtn);
-
-        _dialog.setVisible(true);
-
 
         _dialog.addWindowListener(new WindowAdapter() {
             @Override
@@ -54,6 +54,10 @@ public class ConnectDialog {
             }
         });
 
+    }
+
+    public void show(){
+        _dialog.setVisible(true);
     }
 
     public void close(){
