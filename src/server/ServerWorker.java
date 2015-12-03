@@ -62,6 +62,7 @@ public class ServerWorker extends Thread {
         while(!isInterrupted()){
             try {
                 String command = _inFromClient.readLine();
+                System.out.println(_username + " " + command);
                 String code = command.substring(0, 3);
                 switch (code){
                     case "101":
