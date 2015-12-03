@@ -33,9 +33,12 @@ public class Server extends Thread{
      * Accept new connections while not interrupted.
      */
     public void run(){
+        ServerWorker worker;
         while(!isInterrupted()){
             try {
-                new ServerWorker(_socket.accept(), this);
+                worker = new ServerWorker(_socket.accept(), this);
+                worker.init();
+                worker.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
