@@ -112,4 +112,12 @@ public class ClientUI {
     public void addUser(String user){
         _userListModel.addElement(user);
     }
+
+    /**
+     * Clears the userlist
+     */
+    public void clearUserList()
+    {
+        _userListModel.clear();
+    }
 }

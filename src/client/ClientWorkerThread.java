@@ -50,7 +50,16 @@ public class ClientWorkerThread extends Thread {
                     printMessage(getMessage(message));
                     break;
                 case 299:
-                    disconnect();
+                    String username = getMessage(message);
+                    if(username.equals(_client.getUsername()))
+                    {
+                        disconnect();
+                        _serviceRequested = false;
+                    }
+                    else
+                    {
+                        _clientUI.removeUser(username);
+                    }
                     break;
                 default:
                     System.err.println("Fehler im Switch");
@@ -63,6 +72,7 @@ public class ClientWorkerThread extends Thread {
         System.out.println("UPDATE: " + message);
 
             String[] userlist = message.split(",");
+        _clientUI.clearUserList();
             for(String user : userlist)
             {
                 System.out.println(user);

@@ -9,6 +9,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static java.lang.Thread.sleep;
 
@@ -22,6 +24,7 @@ public class Client {
     private BufferedReader _inFromServer;
     private DataOutputStream _outToServer;
     private boolean _serviceRequested;
+    private String _username;
 
     //Threads
     private ClientWorkerThread _clientThread;
@@ -84,6 +87,7 @@ public class Client {
     }
 
     public void startTCPConnection(String host, int port, String username) throws IOException {
+        _username = username;
         _socket = new Socket(host, port); //Creates socket for client/server communication
         _inFromServer = new BufferedReader(new InputStreamReader(_socket.getInputStream(), "UTF-8"));
         _outToServer = new DataOutputStream(_socket.getOutputStream());
@@ -138,6 +142,7 @@ public class Client {
     }
 
     private void sendMessage(String message) throws IOException {
+        message = getDate() + "   " + _username + ": " + message;
         writeToServer("101 " + message);
     }
 
@@ -157,5 +162,16 @@ public class Client {
 
     public void closeConnection() throws IOException {
         _socket.close();
+    }
+
+    public String getUsername(){
+        return _username;
+    }
+
+    private String getDate()
+    {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        return simpleDateFormat.format(date);
     }
 }
