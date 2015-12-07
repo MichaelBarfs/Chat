@@ -16,7 +16,7 @@ public class ClientUI {
     public final JButton _sendBtn;
     public final JTextField _inputField;
     private DefaultListModel<String> _outputListModel;
-    public DefaultListModel<String> _userListModel;
+    private DefaultListModel<String> _userListModel;
 
 
     /**
@@ -95,5 +95,21 @@ public class ClientUI {
      */
     public void showMessage(String message){
         _outputListModel.addElement(message);
+    }
+
+    /**
+     * Remove an user from ui.
+     * @param user The user you want to remove.
+     */
+    public void removeUser(String user){
+        _userListModel.removeElement(user);
+    }
+
+    /**
+     * Add a user to ui.
+     * @param user The user you want to add.
+     */
+    public void addUser(String user){
+        _userListModel.addElement(user);
     }
 }
