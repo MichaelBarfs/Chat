@@ -80,7 +80,17 @@ public class ServerWorker extends Thread {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                try {
+                    disconnect();
+                } catch (IOException e1) {
+                    _server.removeUser(this);
+                    try {
+                        _socket.close();
+                    } catch (IOException e2) {
+
+                    }
+                    this.interrupt();
+                }
             }
         }
     }

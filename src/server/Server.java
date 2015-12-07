@@ -86,7 +86,7 @@ public class Server extends Thread{
                 System.out.println("Sende an: " + worker.getName());
                 worker.sendToClient(message);
             } catch (IOException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
         _userlock.unlock();
