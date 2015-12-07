@@ -94,6 +94,7 @@ public class ServerWorker extends Thread {
 
     public synchronized void sendToClient(String message) throws IOException {
         _outToClient.write((message + '\r' + '\n').getBytes("UTF-8"));
+        System.out.println("Message an " + getName() + " geschrieben.");
     }
 
 }

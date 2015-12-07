@@ -18,6 +18,7 @@ public class ClientWorkerThread extends Thread {
         _inFromServer = inFromServer;
         _client = client;
         _clientUI = clientUI;
+        _serviceRequested = true;
     }
 
     @Override
@@ -59,11 +60,14 @@ public class ClientWorkerThread extends Thread {
     }
     private void updateUserlist(String message)
     {
+        System.out.println("UPDATE: " + message);
         String[] userlist = message.split(",");
         for(String user : userlist)
         {
-            System.out.println(user);
+            _clientUI._userListModel.addElement(user);
+            //TODO user in gui aktualisieren
         }
+
     }
 
     private void printMessage(String message)
