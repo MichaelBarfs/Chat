@@ -30,13 +30,16 @@ public class ServerWorker extends Thread {
      * @return True, when everything went well otherwise false.
      * @throws IOException
      */
-    public boolean init()throws IOException {
+    public boolean init() throws IOException, InterruptedException {
+        System.out.println("Starte Init...");
         String command = _inFromClient.readLine();
+        System.out.println("INIT: " +command);
         String code = command.substring(0,3);
         if(code.equals("100")){ // Valid connect request?
             _username = command.substring(4);
 
-            if(Pattern.matches("(\\w-_\\.)+", _username)){ // Is valid username?
+
+            if(Pattern.matches("^[A-Za-z0-9\\._-]{3,15}$", _username)){ // Is valid username?
                 if(_server.addUser(this, _username)){ // username not in use?
                     _server.sendToAllClients("200 " + _server.getUserList());
                 }else{ // username already in use
@@ -84,6 +87,7 @@ public class ServerWorker extends Thread {
 
     private void disconnect() throws IOException {
         _server.sendToAllClients("299 " + _username);
+        _server.removeUser(this); //TODO (Von Marc hinzugefügt)
         _socket.close();
         this.interrupt();
     }

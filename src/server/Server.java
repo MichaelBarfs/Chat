@@ -41,6 +41,8 @@ public class Server extends Thread{
                 worker.start();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
