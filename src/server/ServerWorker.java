@@ -66,6 +66,7 @@ public class ServerWorker extends Thread {
             try {
                 String command = _inFromClient.readLine();
                 System.out.println(_username + " " + command);
+                System.err.println("COMMAND: " +command);
                 String code = command.substring(0, 3);
                 switch (code){
                     case "101":
@@ -94,7 +95,6 @@ public class ServerWorker extends Thread {
 
     public synchronized void sendToClient(String message) throws IOException {
         _outToClient.write((message + '\r' + '\n').getBytes("UTF-8"));
-        System.out.println("Message an " + getName() + " geschrieben.");
     }
 
 }

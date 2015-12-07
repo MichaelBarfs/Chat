@@ -14,6 +14,7 @@ import java.awt.event.WindowEvent;
 public class ClientUI {
     public JFrame _frame;
     public final JButton _sendBtn;
+    //public final JButton _userListButton;
     public final JTextField _inputField;
     private DefaultListModel<String> _outputListModel;
     private DefaultListModel<String> _userListModel;
@@ -60,6 +61,9 @@ public class ClientUI {
 
         _sendBtn = new JButton("Send");
         inputPanel.add(_sendBtn);
+
+        /*_userListButton = new JButton("Post Userlist to Chat");
+        inputPanel.add(_userListButton);*/
     }
 
     /**
@@ -111,5 +115,13 @@ public class ClientUI {
      */
     public void addUser(String user){
         _userListModel.addElement(user);
+    }
+
+    /**
+     * Clears the userlist
+     */
+    public void clearUserList()
+    {
+        _userListModel.clear();
     }
 }

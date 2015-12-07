@@ -9,6 +9,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static java.lang.Thread.sleep;
 
@@ -21,7 +23,7 @@ public class Client {
     private Socket _socket;
     private BufferedReader _inFromServer;
     private DataOutputStream _outToServer;
-    private boolean _serviceRequested;
+    private String _username;
 
     //Threads
     private ClientWorkerThread _clientThread;
@@ -33,14 +35,10 @@ public class Client {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public Client(){
-        _serviceRequested = true;
-        //ClientUI ui = new ClientUI("Test");
-        //ui.show();
     }
 
     public static void main(String args[]){
         Client client = new Client();
-        System.out.println("Client Objekt erzeugt.");
 
         client.showConnectionDialog();
     }
@@ -84,10 +82,11 @@ public class Client {
     }
 
     public void startTCPConnection(String host, int port, String username) throws IOException {
+        _username = username;
+
         _socket = new Socket(host, port); //Creates socket for client/server communication
         _inFromServer = new BufferedReader(new InputStreamReader(_socket.getInputStream(), "UTF-8"));
         _outToServer = new DataOutputStream(_socket.getOutputStream());
-        System.out.println("Socket und Streams erzeugt!");
 
 
 
@@ -103,7 +102,6 @@ public class Client {
                 //_clientUI.close();
                 try {
                     disconnect();
-                    _serviceRequested = false;
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -117,6 +115,17 @@ public class Client {
                 e.printStackTrace();
             }
         });
+
+/*        _clientUI._userListButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    requestUserlist();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });*/
 
 
         startClient(host, port, username);
@@ -138,7 +147,23 @@ public class Client {
     }
 
     private void sendMessage(String message) throws IOException {
+        message = getDate() + "   " + _username + ": " + message;
         writeToServer("101 " + message);
+    }
+
+    private void requestUserlist() throws IOException {
+        writeToServer("102");
+    }
+
+    public void postUserlist(String[] userlist) throws IOException {
+        int i = 0;
+        String message = "";
+        for(String user : userlist)
+        {
+            message = message + ++i + ". " + user + "\n";
+        }
+        //sendMessage(message);
+        System.err.println("Userliste auf Konsole: " + message);
     }
 
     private synchronized void writeToServer(String message) throws IOException {
@@ -158,4 +183,14 @@ public class Client {
     public void closeConnection() throws IOException {
         _socket.close();
     }
+
+    private String getDate()
+    {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        return simpleDateFormat.format(date);
+    }
+
+    public String getUsername()
+    {return _username;}
 }
