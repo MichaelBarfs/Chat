@@ -65,6 +65,7 @@ public class ClientWorkerThread extends Thread {
             String[] userlist = message.split(",");
             for(String user : userlist)
             {
+                System.out.println(user);
                 _clientUI._userListModel.addElement(user);
                 //TODO user in gui aktualisieren
             }

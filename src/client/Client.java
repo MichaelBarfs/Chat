@@ -89,11 +89,13 @@ public class Client {
         _outToServer = new DataOutputStream(_socket.getOutputStream());
         System.out.println("Socket und Streams erzeugt!");
 
-        _clientThread = new ClientWorkerThread(_inFromServer,_clientUI, this);
-        _clientThread.start(); //TODO fenster erst zeigen wenn connected wurde
+
 
 
         _clientUI = new ClientUI(username + "  Host: " + host + "   Port: " + port); //Initialisiert Chatfenster
+
+        _clientThread = new ClientWorkerThread(_inFromServer,_clientUI, this);
+        _clientThread.start(); //TODO fenster erst zeigen wenn connected wurde
 
         _clientUI._frame.addWindowListener(new WindowAdapter() { //Fenster-Schliessen-Button definieren
             @Override
