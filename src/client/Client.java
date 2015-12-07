@@ -120,6 +120,7 @@ public class Client {
 
 
         startClient(host, port, username);
+        _conDialog.close();
     }
     /**
     Connects to server
