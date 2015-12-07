@@ -61,13 +61,13 @@ public class ClientWorkerThread extends Thread {
     private void updateUserlist(String message)
     {
         System.out.println("UPDATE: " + message);
-        String[] userlist = message.split(",");
-        for(String user : userlist)
-        {
-            _clientUI._userListModel.addElement(user);
-            //TODO user in gui aktualisieren
-        }
 
+            String[] userlist = message.split(",");
+            for(String user : userlist)
+            {
+                _clientUI._userListModel.addElement(user);
+                //TODO user in gui aktualisieren
+            }
     }
 
     private void printMessage(String message)

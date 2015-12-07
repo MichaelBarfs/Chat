@@ -86,8 +86,8 @@ public class ServerWorker extends Thread {
     }
 
     private void disconnect() throws IOException {
+        _server.removeUser(this);
         _server.sendToAllClients("299 " + _username);
-        _server.removeUser(this); //TODO (Von Marc hinzugefügt)
         _socket.close();
         this.interrupt();
     }
