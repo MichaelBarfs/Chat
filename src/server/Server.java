@@ -37,11 +37,8 @@ public class Server extends Thread{
         while(!isInterrupted()){
             try {
                 worker = new ServerWorker(_socket.accept(), this);
-                worker.init();
                 worker.start();
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -56,6 +53,7 @@ public class Server extends Thread{
     public boolean addUser(ServerWorker worker, String username){
         _userlock.lock();
         if(_user.containsValue(username)){
+            _userlock.unlock();
             return false;
         }
         _user.put(worker, username);
@@ -69,7 +67,8 @@ public class Server extends Thread{
      */
     public void removeUser(ServerWorker worker){
         _userlock.lock();
-        _user.remove(worker);
+        _user.remove(worker,_user.get(worker));
+        //_user.remove(worker);
         _userlock.unlock();
     }
 
@@ -80,6 +79,7 @@ public class Server extends Thread{
     public void sendToAllClients(String message){
         System.out.println("SendToAll: " + message);
         _userlock.lock();
+        System.out.println("Lock aquired!");
         for(ServerWorker worker : _user.keySet()){
             try {
                 worker.sendToClient(message);

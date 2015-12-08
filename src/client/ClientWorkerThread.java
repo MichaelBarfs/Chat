@@ -36,6 +36,7 @@ public class ClientWorkerThread extends Thread {
 
     private void readFromServer() throws IOException {
         String message = _inFromServer.readLine();
+        System.out.println("Empfangen: " + message);
         if(message != null)
         {
             int code = getCode(message);
@@ -54,7 +55,6 @@ public class ClientWorkerThread extends Thread {
                     if(username.equals(_client.getUsername()))
                     {
                         disconnect();
-                        _serviceRequested = false;
                     }
                     else
                     {
@@ -65,6 +65,9 @@ public class ClientWorkerThread extends Thread {
                     _clientUI.showMessage(getMessage(message));
                     break;
                 case 301:
+                    _clientUI.showMessage(getMessage(message));
+                    break;
+                case 302:
                     _clientUI.showMessage(getMessage(message));
                     break;
                 default:

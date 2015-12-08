@@ -31,13 +31,14 @@ public class ServerWorker extends Thread {
      * @throws IOException
      */
     public boolean init() throws IOException, InterruptedException {
-        System.out.println("Warte auf Useranmeldung...");
+        System.out.println("Warte auf Useranmeldung von " +getName() + "...");
         String command = _inFromClient.readLine();
         System.out.println("Empfangen: " +command);
         String code = command.substring(0,3);
         if(code.equals("100")){ // Valid connect request?
             _username = command.substring(4);
 
+            System.out.println("Prüfe: " + command);
 
             if(Pattern.matches("^[A-Za-z0-9\\._-]{3,15}$", _username)){ // Is valid username?
                 if(_server.addUser(this, _username)){ // username not in use?
@@ -52,9 +53,20 @@ public class ServerWorker extends Thread {
                 sendToClient("300 Username invalid! (3-15 letters, a-z, A-Z, 0-9, _ , - , . )");
                 return init();
             }
-
-        }else{ // Wrong command
-            _socket.close();
+        }
+        else
+        { // Wrong command
+            if(code.equals("199"))
+            {
+                sendToClient("299 " + _username);
+                _socket.close();
+                this.interrupt();
+                System.out.println("Beende Verbindung zu " + getName());
+            }
+            else
+            {
+                sendToClient("302 You have to connect with a valid username first!");
+            }
             return false;
         }
         return true;
@@ -64,10 +76,20 @@ public class ServerWorker extends Thread {
      * Mainloop check for new messages from client and execute commands.
      */
     public void run(){
+        try {
+            while(!isInterrupted() && !init()){} //Waits until client registered with valid username
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            interrupt();
+            e.printStackTrace();
+        }
+
         while(!isInterrupted()){
             try {
                 String command = _inFromClient.readLine();
-                System.out.println(_username + " " + command);
+                System.out.println(_username + ": " + command);
                 String code = command.substring(0, 3);
                 switch (code){
                     case "101":
@@ -81,14 +103,17 @@ public class ServerWorker extends Thread {
                     break;
                 }
 
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 try {
                     disconnect();
-                } catch (IOException e1) {
                     _server.removeUser(this);
+                } catch (IOException e1) {
+
                     try {
                         _socket.close();
-                    } catch (IOException e2) {
+                    } catch (IOException e2)
+                    {
 
                     }
                     this.interrupt();
@@ -99,6 +124,7 @@ public class ServerWorker extends Thread {
 
     private void disconnect() throws IOException {
         _server.sendToAllClients("299 " + _username);
+        System.out.println(_username + " wird abgemeldet.");
         _server.removeUser(this);
         _socket.close();
         this.interrupt();
