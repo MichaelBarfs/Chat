@@ -61,6 +61,12 @@ public class ClientWorkerThread extends Thread {
                         _clientUI.removeUser(username);
                     }
                     break;
+                case 300:
+                    _clientUI.showMessage(getMessage(message));
+                    break;
+                case 301:
+                    _clientUI.showMessage(getMessage(message));
+                    break;
                 default:
                     System.err.println("Fehler im Switch");
             }
@@ -69,22 +75,17 @@ public class ClientWorkerThread extends Thread {
     }
     private void updateUserlist(String message)
     {
-        System.out.println("UPDATE: " + message);
-
             String[] userlist = message.split(",");
-        _clientUI.clearUserList();
+            _clientUI.clearUserList();
             for(String user : userlist)
             {
-                System.out.println(user);
                 _clientUI.addUser(user);
-                //TODO user in gui aktualisieren
             }
     }
 
     private void printMessage(String message)
     {
         _clientUI.showMessage(message);
-        System.out.println("Client: " + message);
     }
 
     private void disconnect() throws IOException {

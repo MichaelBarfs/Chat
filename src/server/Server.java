@@ -80,10 +80,8 @@ public class Server extends Thread{
     public void sendToAllClients(String message){
         System.out.println("SendToAll: " + message);
         _userlock.lock();
-        System.out.println("Lock überwunden");
         for(ServerWorker worker : _user.keySet()){
             try {
-                System.out.println("Sende an: " + worker.getName());
                 worker.sendToClient(message);
             } catch (IOException e) {
                 // e.printStackTrace();

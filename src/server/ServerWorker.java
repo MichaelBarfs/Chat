@@ -31,9 +31,9 @@ public class ServerWorker extends Thread {
      * @throws IOException
      */
     public boolean init() throws IOException, InterruptedException {
-        System.out.println("Starte Init...");
+        System.out.println("Warte auf Useranmeldung...");
         String command = _inFromClient.readLine();
-        System.out.println("INIT: " +command);
+        System.out.println("Empfangen: " +command);
         String code = command.substring(0,3);
         if(code.equals("100")){ // Valid connect request?
             _username = command.substring(4);
@@ -42,12 +42,14 @@ public class ServerWorker extends Thread {
             if(Pattern.matches("^[A-Za-z0-9\\._-]{3,15}$", _username)){ // Is valid username?
                 if(_server.addUser(this, _username)){ // username not in use?
                     _server.sendToAllClients("200 " + _server.getUserList());
-                }else{ // username already in use
+                }
+                else
+                { // username already in use
                     sendToClient("301 Username not available");
                     return init();
                 }
             }else{ // invalid username
-                sendToClient("300 Username invalid");
+                sendToClient("300 Username invalid! (3-15 letters, a-z, A-Z, 0-9, _ , - , . )");
                 return init();
             }
 
@@ -104,7 +106,6 @@ public class ServerWorker extends Thread {
 
     public synchronized void sendToClient(String message) throws IOException {
         _outToClient.write((message + '\r' + '\n').getBytes("UTF-8"));
-        System.out.println("Message an " + getName() + " geschrieben.");
     }
 
 }
